@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 import os, re, sys
 
-print( 'Opening', sys.argv[1]
+print   'Opening', sys.argv[1]
 f = sys.argv[1]
 t = f + '.tmp'
 input = open(f, 'r');

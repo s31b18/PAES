@@ -35,12 +35,12 @@ class TestConformance(BaseTest):
 			"AddRoundKey": "ADD_ROUND_KEY",
 			"AES": ""}
 		for mode in ("encrypt", "decrypt"):
-			print( "AES MODE: %s" % mode
+			print   "AES MODE: %s" % mode
 			self.echo("\nAES mode: %s\n\n" % mode)
 			for name, operation in d.items():
 				self.compile_paes(operation)
 				self.compile_aes(operation)
-				print( "%s" % name,
+				print   "%s" % name,
 				self.echo("%s" % name)
 				
 				clearfile = self.create_dummy(size)
@@ -54,7 +54,7 @@ class TestConformance(BaseTest):
 					else:
 						res = "ko"
 				except Exception as e:
-					print( "EXCEPTION:", e
+					print   "EXCEPTION:", e
 					self.echo("\n\nEXCEPTION: %s\n" % str(e))
 					res = "ko"
 					
@@ -62,7 +62,7 @@ class TestConformance(BaseTest):
 				if res == "ko":
 					self.ok = False
 					
-				print( res
+				print   res
 				self.echo(" %s\n" % res)
 
 TestConformance().run()

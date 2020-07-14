@@ -855,7 +855,7 @@ program = clCreateProgramWithSource(context, 1,
    (const char **) &source, &source_size, &error);
 clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
 clGetProgramBuildInfo(program, devices[0], CL_PROGRAM_BUILD_LOG, 300, build_log, NULL);
-print(f("\nBuild log:\n%s\n", build_log);
+print  f("\nBuild log:\n%s\n", build_log);
 \end{lstlisting}
 \end{figure}
 

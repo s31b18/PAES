@@ -30,7 +30,7 @@ class TestBijectivity(BaseTest):
 	def test(self):
 		self.compile_paes()
 		for size in (128, 1024, 1048576, 8388608, 67108864):
-			print( "%d" % size,
+			print   "%d" % size,
 			self.echo("%d" % size)
 			
 			clearfile_in = self.create_dummy(size)
@@ -44,7 +44,7 @@ class TestBijectivity(BaseTest):
 				else:
 					res = "ko"
 			except Exception as e:
-				print( "EXCEPTION:", e
+				print   "EXCEPTION:", e
 				self.echo("\n\nEXCEPTION: %s\n" % str(e))
 				res = "ko"
 				
@@ -52,7 +52,7 @@ class TestBijectivity(BaseTest):
 			if res == "ko":
 				self.ok = False
 				
-			print( res
+			print   res
 			self.echo(" %s\n" % res)
 
 TestBijectivity().run()

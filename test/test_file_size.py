@@ -48,7 +48,7 @@ class TestFileSize(BaseTest):
 			if res == "ko":
 				self.ok = False
 			
-			print( "%d %s" % (size, res)
+			print   "%d %s" % (size, res)
 			self.echo("%d %s\n" % (size, res))
 			size = size + 1
 			if size < MAX_SIZE:
