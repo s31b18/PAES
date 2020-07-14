@@ -35,7 +35,7 @@ import re
 
 class BaseTest:
 	def __init__(self):
-		print   "\n\n"
+		print "\n\n"
 		
 		self.hostname = gethostname()
 		
@@ -72,17 +72,17 @@ class BaseTest:
 		try:
 			mkdir(self.directory)
 		except Exception as e:
-			print   "Unable to create the temporary test directory", self.directory
-			print   e
+			print "Unable to create the temporary test directory", self.directory
+			print e
 			exit(1)
 		
 		chdir(self.directory)
 		
-		print   "\n\n", "-" * 60, "\n"
-		print   "####  RUNNING", self.name.replace("_", " ").upper(), " ####\n"
-		print   "DEVICE   :", self.device
-		print   "HOSTNAME :", self.hostname
-		print   "\n\n"
+		print "\n\n", "-" * 60, "\n"
+		print "####  RUNNING", self.name.replace("_", " ").upper(), " ####\n"
+		print "DEVICE   :", self.device
+		print "HOSTNAME :", self.hostname
+		print "\n\n"
 		
 		self.echo("Test name: %s\n" % self.name.replace("_", " "))
 		self.echo("Device: %s\n" % self.device)
@@ -94,36 +94,36 @@ class BaseTest:
 		self.ok = True
 	
 	def compile_paes(self, operation = ""):
-		print   "\n\nCompiling PAES\n\n"
+		print "\n\nCompiling PAES\n\n"
 		chdir(self.paes_dir)
 		if len(operation) > 0:
 			defines = "DEFINES='-D %s'" % operation
 		else:
 			defines = ""
 		if system("make clean && make %s" % defines) != 0:
-			print   "\n\nDANGER: error compiling PAES\n\n"
+			print "\n\nDANGER: error compiling PAES\n\n"
 			chdir(self.base_dir)
 			exit(2)
 		system("cp paes *.cl '%s'" % self.directory)
 		chdir(self.directory)
 
 	def compile_aes(self, operation = ""):
-		print   "\n\nCompiling AES\n\n"
+		print "\n\nCompiling AES\n\n"
 		chdir(self.aes_dir)
 		if len(operation) > 0:
 			defines = "DEFINES='-D %s'" % operation
 		else:
 			defines = ""
 		if system("make clean && make %s" % defines) != 0:
-			print   "\n\nDANGER: error compiling AES\n\n"
+			print "\n\nDANGER: error compiling AES\n\n"
 			chdir(self.base_dir)
 			exit(2)
 		system("cp aes '%s'" % self.directory)
 		chdir(self.directory)
 
 	def cleanup(self):
-		print   "\n\n", "-" * 60, "\n"
-		print   "%s took %d seconds" % (self.name, self.elapsed)
+		print "\n\n", "-" * 60, "\n"
+		print "%s took %d seconds" % (self.name, self.elapsed)
 		self.echo("\nEnd time: %s\n" % str(datetime.now()))
 		self.echo("Time elapsed: %d seconds\n" % self.elapsed)
 		
@@ -132,9 +132,9 @@ class BaseTest:
 		if self.ok == True:
 			system("rm -fr '%s'" % self.directory)
 		else:
-			print   "\nWARNING: something went wrong, avoiding temporary directory's deletion"
+			print "\nWARNING: something went wrong, avoiding temporary directory's deletion"
 		
-		print   "\n\n"
+		print "\n\n"
 		
 	def run(self):
 		start_time = time()
