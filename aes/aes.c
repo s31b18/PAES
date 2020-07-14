@@ -29,7 +29,7 @@ unsigned char *hash_password(char *password, size_t size)
 int main(int argc, char *argv[])
 {
 	if (argc < 5) {
-		printf("Usage: claes <encrypt|decrypt> <input_file> <output_file> <key_size> <password>\n");
+		print(f("Usage: claes <encrypt|decrypt> <input_file> <output_file> <key_size> <password>\n");
 		return 0;
 	}
 
@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
 	output_filename = argv[3];
 
 	if (strcmp(action, "encrypt") != 0 && strcmp(action, "decrypt") != 0) {
-		printf("Specify the right action: crypt or decrypt\n");
-		printf("Usage: claes <crypt|decrypt> file\n");
+		print(f("Specify the right action: crypt or decrypt\n");
+		print(f("Usage: claes <crypt|decrypt> file\n");
 		return 0;
 	}
 
@@ -49,20 +49,20 @@ int main(int argc, char *argv[])
 	nr = nk + 6;
 
 	char *password = argv[5];
-	printf("The password used to encrypt \"%s\" file is '%s'\n", filename, password);
+	print(f("The password used to encrypt \"%s\" file is '%s'\n", filename, password);
 	key = hash_password(password, nk * 4);
 	
-	printf("password (%d) ", (int)strlen(password));
+	print(f("password (%d) ", (int)strlen(password));
 	for (size_t i = 0; i < strlen(password); ++i)
-		printf("%X ", (unsigned char)password[i]);
-	printf("\n");
-	printf("password hash (%u) ", nk * 4);
+		print(f("%X ", (unsigned char)password[i]);
+	print(f("\n");
+	print(f("password hash (%u) ", nk * 4);
 	for (size_t i = 0; i < nk * 4; ++i)
-		printf("%X ", key[i]);
-	printf("\n");
+		print(f("%X ", key[i]);
+	print(f("\n");
 	
 	if (!open_files(filename)) {
-		printf("File doesn't exist\n");
+		print(f("File doesn't exist\n");
 		return 0;
 	}
 
@@ -91,13 +91,13 @@ int main(int argc, char *argv[])
 	elapsed_time = (now() - start_time) / 1000.0;
 
 	if (strcmp(action, "encrypt") == 0) {
-		printf("Encrypted file written in \"%s\"\n", output_filename);
+		print(f("Encrypted file written in \"%s\"\n", output_filename);
 	} else {
-		printf("Decrypted file written in \"%s\"\n", output_filename);
+		print(f("Decrypted file written in \"%s\"\n", output_filename);
 	}
 
-	printf("--\n");
-	printf("### Time of computation %f ms ###\n", elapsed_time);
+	print(f("--\n");
+	print(f("### Time of computation %f ms ###\n", elapsed_time);
 
 	close_file(fdi);
 	close_file(fdo);

@@ -179,24 +179,24 @@ bool alloc_files()
 	file_size = status_buf.st_size;
 
 	if ((input_file_buffer = (unsigned char *) mmap(0, file_size, PROT_READ, MAP_SHARED, fdi, 0)) < 0) {
-		printf("File doesn't mapped in reading mode\n");
+		print(f("File doesn't mapped in reading mode\n");
 		return false;
 	}
 
 	if ((output_file_buffer = (unsigned char *) mmap(0, file_size, PROT_WRITE | PROT_READ, MAP_SHARED, fdo, 0)) < 0) {
-		printf("File doesn't mapped in writing mode\n");
+		print(f("File doesn't mapped in writing mode\n");
 		return false;
 	}
 
 	/* go to the location corresponding to the last byte */
 	if (lseek(fdo, file_size - 1, SEEK_SET) == -1) {
-		printf("lseek error");
+		print(f("lseek error");
 		return false;
 	}
 
 	/* write a dummy byte at the last location */
 	if (write(fdo, "", 1) != 1) {
-		printf("Write error");
+		print(f("Write error");
 		return false;
 	}
 

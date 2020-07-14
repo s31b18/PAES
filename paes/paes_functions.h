@@ -18,7 +18,7 @@
 
 #ifndef __PAES_FUNCTIONS_H__
 #define __PAES_FUNCTIONS_H__ 1
-
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 /**
  * \file paes_functions.h
  *
