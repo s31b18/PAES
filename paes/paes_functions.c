@@ -36,7 +36,7 @@ size_t read_file(char *file_name, cl_uchar ** buffer)
 {
 	int fd = open(file_name, O_RDONLY);
 	if (fd == -1) {
-		fprint  f(stderr, "ERROR: unable to open input file '%s'.\n", file_name);
+		fprintf(stderr, "ERROR: unable to open input file '%s'.\n", file_name);
 		exit(EXIT_FAILURE);
 	}
 
@@ -46,7 +46,7 @@ size_t read_file(char *file_name, cl_uchar ** buffer)
 
 	*buffer = (cl_uchar *) calloc(size, sizeof(cl_uchar));
 	if (read(fd, *buffer, size) == -1) {
-		fprint  f(stderr, "ERROR: unable to read from input file '%s'.\n", file_name);
+		fprintf(stderr, "ERROR: unable to read from input file '%s'.\n", file_name);
 		close(fd);
 		exit(EXIT_FAILURE);
 	}
@@ -60,12 +60,12 @@ void write_file(char *file_name, cl_uchar * buffer, size_t size)
 {
 	int fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, FILE_WRITE_MASK);
 	if (fd == -1) {
-		fprint  f(stderr, "ERROR: unable to open output file '%s'.\n", file_name);
+		fprintf(stderr, "ERROR: unable to open output file '%s'.\n", file_name);
 		exit(EXIT_FAILURE);
 	}
 
 	if (write(fd, buffer, size) == -1) {
-		fprint  f(stderr, "ERROR: unable to write to output file '%s'.\n", file_name);
+		fprintf(stderr, "ERROR: unable to write to output file '%s'.\n", file_name);
 		close(fd);
 		exit(EXIT_FAILURE);
 	}
@@ -162,11 +162,11 @@ char *get_opencl_device_name(opencl_device device)
 	return opencl_device_name[device];
 }
 
-static void print  _device_informations(cl_device_id device)
+static void print_device_informations(cl_device_id device)
 {
 	char device_string[1024];
 	clGetDeviceInfo(device, CL_DEVICE_NAME, sizeof(device_string), &device_string, NULL);
-	print  f("\nDevice: %s\n\n", device_string);
+	printf("\nDevice: %s\n\n", device_string);
 }
 
 static double execution_time_msecs(cl_event event)
@@ -196,12 +196,12 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	cl_ulong blocks = size / AES_BLOCK_SIZE;
 	bool ok = 1;		// By default, everything is fine.
 
-	print  f("Loading OpenCL source code...\n");
+	printf("Loading OpenCL source code...\n");
 	size_t source_size = read_file(OPENCL_SOURCE, &source);
 
 	error = clGetPlatformIDs(0, NULL, &num_platforms);
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clGetPlatformIDs (num_platforms), error code %d\n", error);
+		fprintf(stderr, "ERROR: clGetPlatformIDs (num_platforms), error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
@@ -209,7 +209,7 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	platforms = (cl_platform_id *) malloc(sizeof(cl_platform_id) * num_platforms);
 	error = clGetPlatformIDs(num_platforms, platforms, NULL);
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clGetPlatformIDs (platforms), error code %d\n", error);
+		fprintf(stderr, "ERROR: clGetPlatformIDs (platforms), error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
@@ -217,9 +217,9 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	cl_context_properties cps[3] = { CL_CONTEXT_PLATFORM, (cl_context_properties) platforms[0], 0 };
 	cl_context_properties *cprops = (NULL == platforms[0]) ? NULL : cps;
 	context = clCreateContextFromType(cprops, device_type[device], NULL, NULL, &error);
-	print  f("clCreateContextFromType...\n");
+	printf("clCreateContextFromType...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clCreateContextFromType, error code %d\n", error);
+		fprintf(stderr, "ERROR: clCreateContextFromType, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
@@ -228,18 +228,18 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	error = clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &context_information_size);
 	devices = (cl_device_id *) malloc(context_information_size);
 	error |= clGetContextInfo(context, CL_CONTEXT_DEVICES, context_information_size, devices, NULL);
-	print  f("clGetContextInfo...\n");
+	printf("clGetContextInfo...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clGetContextInfo, error code %d\n", error);
+		fprintf(stderr, "ERROR: clGetContextInfo, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
-	print  _device_informations(devices[0]);
+	print_device_informations(devices[0]);
 
-	command_queue = clCreateCommandQueueWithProperties(context, devices[0], CL_QUEUE_PROFILING_ENABLE, &error);
-	print  f("clCreateCommandQueue...\n");
+	command_queue = clCreateCommandQueue(context, devices[0], CL_QUEUE_PROFILING_ENABLE, &error);
+	printf("clCreateCommandQueue...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clCreateCommandQueue, error code %d\n", error);
+		fprintf(stderr, "ERROR: clCreateCommandQueue, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
@@ -265,51 +265,51 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	local_size = PAES_LOCAL_SIZE;
 #endif
 
-	print  f("Global work size is %lu\n", (long unsigned) global_size);
-	print  f("Local work size is %lu\n", (long unsigned) local_size);
+	printf("Global work size is %lu\n", (long unsigned) global_size);
+	printf("Local work size is %lu\n", (long unsigned) local_size);
 
 	cl_uint round_key_size = get_round_key_size(key_size_bits);
 	cl_uchar *round_key = key_expansion(key, key_size_bits);
-	print  f("Generating the round keys...\n");
+	printf("Generating the round keys...\n");
 
 	cl_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(cl_uchar) * size, NULL, &error);
 	error1 = clEnqueueWriteBuffer(command_queue, cl_buffer, CL_TRUE, 0, sizeof(cl_uchar) * size, (void *) buffer, 0, NULL, &event_write);
 	cl_round_key = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(cl_uchar) * round_key_size, round_key, &error2);
 	error |= error1 |= error2;
-	print  f("clCreateBuffer & co...\n");
+	printf("clCreateBuffer & co...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clCreateBuffer, error code %d\n", error);
+		fprintf(stderr, "ERROR: clCreateBuffer, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
 
 	program = clCreateProgramWithSource(context, 1, (const char **) &source, &source_size, &error);
-	print  f("clCreateProgramWithSource...\n");
+	printf("clCreateProgramWithSource...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clCreateProgramWithSource, error code %d\n", error);
+		fprintf(stderr, "ERROR: clCreateProgramWithSource, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
 
 	error = clBuildProgram(program, 1, devices, 0, NULL, NULL);
-	print  f("clBuildProgram...\n");
+	printf("clBuildProgram...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clBuildProgram, error code %d\n", error);
+		fprintf(stderr, "ERROR: clBuildProgram, error code %d\n", error);
 		ok = 0;
 		char *build_log = NULL;
 		size_t build_log_size = 0;
 		clGetProgramBuildInfo (program, devices[0], CL_PROGRAM_BUILD_LOG, build_log_size, build_log, &build_log_size);
 		build_log = (char *)malloc(build_log_size);
 		clGetProgramBuildInfo(program, devices[0], CL_PROGRAM_BUILD_LOG, build_log_size, build_log, NULL);
-		print  f("\nBuild log:\n%s\n", build_log);
+		printf("\nBuild log:\n%s\n", build_log);
 		goto cleanup;
 	}
 	clUnloadCompiler();
 
 	kernel = clCreateKernel(program, "kernel_aes", &error);
-	print  f("clCreateKernel...\n");
+	printf("clCreateKernel...\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clCreateKernel, error code %d\n", error);
+		fprintf(stderr, "ERROR: clCreateKernel, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
@@ -324,17 +324,17 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	cl_uint round = 0;
 	double execution_time = 0;
 	while (round <= rounds) {
-		print  f("Round %u...\n", (unsigned) round);
+		printf("Round %u...\n", (unsigned) round);
 		error |= clSetKernelArg(kernel, 5, sizeof(cl_uint), (void *) &round);
 		if (error != CL_SUCCESS) {
-			fprint  f(stderr, "ERROR: clSetKernelArg, error code %d\n", error);
+			fprintf(stderr, "ERROR: clSetKernelArg, error code %d\n", error);
 			ok = 0;
 			goto cleanup;
 		}
 
 		error = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, &event_execute);
 		if (error != CL_SUCCESS) {
-			fprint  f(stderr, "ERROR: clEnqueueNDRangeKernel, error code %d\n", error);
+			fprintf(stderr, "ERROR: clEnqueueNDRangeKernel, error code %d\n", error);
 			ok = 0;
 			goto cleanup;
 		}
@@ -345,19 +345,19 @@ int apply_aes(cl_uchar * buffer, size_t size, opencl_device device, aes_mode mod
 	}
 
 	error = clEnqueueReadBuffer(command_queue, cl_buffer, CL_TRUE, 0, sizeof(cl_uchar) * size, buffer, 0, NULL, &event_read);
-	print  f("clEnqueueReadBuffer...\n\n");
+	printf("clEnqueueReadBuffer...\n\n");
 	if (error != CL_SUCCESS) {
-		fprint  f(stderr, "ERROR: clEnqueueReadBuffer, error code %d\n", error);
+		fprintf(stderr, "ERROR: clEnqueueReadBuffer, error code %d\n", error);
 		ok = 0;
 		goto cleanup;
 	}
 
-	print  f("Encrypt time:\t%.3f ms\n", execution_time);
-	print  f("Write time:\t%.3f ms\n", execution_time_msecs(event_write));
-	print  f("Read time:\t%.3f ms\n", execution_time_msecs(event_read));
+	printf("Encrypt time:\t%.3f ms\n", execution_time);
+	printf("Write time:\t%.3f ms\n", execution_time_msecs(event_write));
+	printf("Read time:\t%.3f ms\n", execution_time_msecs(event_read));
 
       cleanup:
-	print  f("Cleanup... \n");
+	printf("Cleanup... \n");
 
 	if (event_write)
 		clReleaseEvent(event_write);

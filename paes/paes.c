@@ -46,16 +46,16 @@ const unsigned short default_key_size_bits = 128;
  */
 void show_help(char *argv[])
 {
-	print  f("\nUsage: %s -i INPUT -o OUTPUT -m MODE [-k KEY_SIZE] [-p PASSWD] [-d DEV] [-g GSIZE] [-l LSIZE]\n\n", argv[0]);
-	print  f("  -i INPUT         the input file\n");
-	print  f("  -o OUTPUT        the output file\n");
-	print  f("  -m MODE          MODE can be encrypt or decrypt\n");
-	print  f("  -k KEY_SIZE      the key size can be 128, 192 or 256 (default is %d)\n", default_key_size_bits);
-	print  f("  -p PASSWD        the password; if unspecified the user will be asked to type it\n");
-	print  f("  -d DEV           DEV can be cpu or gpu (default is %s)\n", get_opencl_device_name(DEFAULT_DEVICE));
-	print  f("  -g GSIZE         the OpenCL global work size (default is decided by OpenCL)\n");
-	print  f("  -l LSIZE         the OpenCL local work size (default is %u)\n", (unsigned) OPENCL_DEFAULT_LOCAL_SIZE);
-	print  f("\n");
+	printf("\nUsage: %s -i INPUT -o OUTPUT -m MODE [-k KEY_SIZE] [-p PASSWD] [-d DEV] [-g GSIZE] [-l LSIZE]\n\n", argv[0]);
+	printf("  -i INPUT         the input file\n");
+	printf("  -o OUTPUT        the output file\n");
+	printf("  -m MODE          MODE can be encrypt or decrypt\n");
+	printf("  -k KEY_SIZE      the key size can be 128, 192 or 256 (default is %d)\n", default_key_size_bits);
+	printf("  -p PASSWD        the password; if unspecified the user will be asked to type it\n");
+	printf("  -d DEV           DEV can be cpu or gpu (default is %s)\n", get_opencl_device_name(DEFAULT_DEVICE));
+	printf("  -g GSIZE         the OpenCL global work size (default is decided by OpenCL)\n");
+	printf("  -l LSIZE         the OpenCL local work size (default is %u)\n", (unsigned) OPENCL_DEFAULT_LOCAL_SIZE);
+	printf("\n");
 	exit(EXIT_SUCCESS);
 }
 
@@ -135,17 +135,17 @@ void parse_command_line(int argc, char *argv[], char **input_file_name, char **o
 void check_arguments(aes_mode mode, unsigned short key_size_bits, opencl_device device)
 {
 	if (mode == AES_MODE_NONE) {
-		fprint  f(stderr, "ERROR: wrong AES mode, it should be encrypt or decrypt.\n");
+		fprintf(stderr, "ERROR: wrong AES mode, it should be encrypt or decrypt.\n");
 		exit(EXIT_FAILURE);
 	}
 
 	if (key_size_bits != 128 && key_size_bits != 192 && key_size_bits != 256) {
-		fprint  f(stderr, "ERROR: wrong key size, it should be 128, 192 or 256.\n");
+		fprintf(stderr, "ERROR: wrong key size, it should be 128, 192 or 256.\n");
 		exit(EXIT_FAILURE);
 	}
 
 	if (device == OPENCL_DEVICE_NONE) {
-		fprint  f(stderr, "ERROR: wrong OpenCL device, it should be cpu or gpu.\n");
+		fprintf(stderr, "ERROR: wrong OpenCL device, it should be cpu or gpu.\n");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 	opencl_device device;
 	cl_uchar *buffer = NULL;
 
-	print  f("\n\n-------- PAES --------\n\n\n");
+	printf("\n\n-------- PAES --------\n\n\n");
 
 	parse_command_line(argc, argv, &input_file_name, &output_file_name, &mode, &key_size_bits, &password, &device);
 	check_arguments(mode, key_size_bits, device);
@@ -199,14 +199,14 @@ int main(int argc, char *argv[])
 
 	password_hash = hash_password(password, key_size_bits / 8);
 
-	print  f("PARAMETERS:\n");
-	print  f("   Input file: %s\n", input_file_name);
-	print  f("   Output file: %s\n", output_file_name);
-	print  f("   AES mode: %s\n", get_aes_mode_name(mode));
-	print  f("   Key size: %u\n", key_size_bits);
-	print  f("   Device: %s\n", get_opencl_device_name(device));
-	print  f("   File size: %u bytes\n", (unsigned) size);
-	print  f("\n\n");
+	printf("PARAMETERS:\n");
+	printf("   Input file: %s\n", input_file_name);
+	printf("   Output file: %s\n", output_file_name);
+	printf("   AES mode: %s\n", get_aes_mode_name(mode));
+	printf("   Key size: %u\n", key_size_bits);
+	printf("   Device: %s\n", get_opencl_device_name(device));
+	printf("   File size: %u bytes\n", (unsigned) size);
+	printf("\n\n");
 
 	if (apply_aes(buffer, size, device, mode, password_hash, key_size_bits) != -1)
 		write_file(output_file_name, buffer, size);
@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 	if (password_hash)
 		free(password_hash);
 
-	print  f("\n\n----- It ends here... -----\n\n\n");
+	printf("\n\n----- It ends here... -----\n\n\n");
 
 	return EXIT_SUCCESS;
 }
